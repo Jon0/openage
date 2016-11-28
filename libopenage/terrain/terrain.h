@@ -23,10 +23,6 @@ class RenderOptions;
 class TerrainChunk;
 class TerrainObject;
 
-/**
- * type that for terrain ids.
- */
-using terrain_t = int;
 
 /**
  * hashing for chunk coordinates.
@@ -43,6 +39,27 @@ struct coord_chunk_hash {
 
 
 /**
+ * type for terrain ids.
+ */
+using terrain_t = int;
+
+
+/**
+ * Attributes for each terrain type.
+ *
+ * Different terrains allow land or water units to pass
+ * and some allow buildings to be built.
+ */
+class TerrainType {
+public:
+	TerrainType(int id);
+	~TerrainType();
+	terrain_t terrain_id;
+	bool land, water, build;
+};
+
+
+/**
  * describes the properties of one terrain tile.
  *
  * this includes the terrain_id (ice, water, grass, ...)
@@ -53,6 +70,7 @@ public:
 	TileContent();
 	~TileContent();
 	terrain_t terrain_id;
+	int elevation;
 	std::vector<TerrainObject *> obj;
 };
 
@@ -92,6 +110,7 @@ struct influence {
 	terrain_t terrain_id; //!< the terrain id of the influence
 };
 
+
 /**
  * influences for one tile.
  * as a tile has 8 adjacent and diagonal neighbors,
@@ -103,6 +122,7 @@ struct influence_group {
 	struct influence data[8];
 };
 
+
 /**
  * one influence on another tile.
  */
@@ -111,6 +131,7 @@ struct neighbor_tile {
 	tile_state state;
 	int priority;
 };
+
 
 /**
  * storage data for a single terrain tile.
@@ -127,6 +148,7 @@ struct tile_data {
 	tile_state state;
 };
 
+
 /**
  * collection of drawing data for a single tile.
  * because of influences, a maximum of 8+1 draws
@@ -137,6 +159,7 @@ struct tile_draw_data {
 	struct tile_data data[9];
 };
 
+
 /**
  * the complete render instruction collection for the terrain.
  * this is passed to the renderer and will be drawn on screen.
@@ -145,6 +168,7 @@ struct terrain_render_data {
 	std::vector<struct tile_draw_data> tiles;
 	std::set<TerrainObject *, util::less<TerrainObject *>> objects;
 };
+
 
 /**
  * specification for all available
@@ -161,7 +185,10 @@ struct terrain_meta {
 	std::unique_ptr<int[]> terrain_id_blendmode_map;
 
 	std::unique_ptr<influence[]> influences_buf;
+
+	std::unordered_map<terrain_t, TerrainType> terrain_types;
 };
+
 
 /**
  * the terrain class is the main top-management interface

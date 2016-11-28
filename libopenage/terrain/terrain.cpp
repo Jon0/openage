@@ -23,11 +23,26 @@
 
 namespace openage {
 
-TileContent::TileContent() :
-	terrain_id{0} {
+
+TerrainType::TerrainType(int id) :
+	terrain_id(id),
+	land(true),
+	water(false),
+	build(true) {
 }
 
+
+TerrainType::~TerrainType() {}
+
+
+TileContent::TileContent() :
+	terrain_id{0},
+	elevation{0} {
+}
+
+
 TileContent::~TileContent() {}
+
 
 Terrain::Terrain(terrain_meta *meta, bool is_infinite)
 	:
